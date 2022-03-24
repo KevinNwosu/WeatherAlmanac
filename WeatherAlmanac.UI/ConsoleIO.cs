@@ -40,6 +40,26 @@ namespace WeatherAlmanac.UI
                 }
             }
         }
+        public decimal GetDecimal(string prompt)
+        {
+            decimal value;
+
+            while (true)
+            {
+                Console.Write(prompt);
+
+                string input = Console.ReadLine();
+
+                if (decimal.TryParse(input, out value))
+                {
+                    return value;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input.");
+                }
+            }
+        }
         public int GetIntOrNull(string prompt, int upperLimit, int lowerLimit)
         {
             int value;
@@ -77,6 +97,32 @@ namespace WeatherAlmanac.UI
         {
             Console.Write(message);
             return Console.ReadLine();
+        }
+        public DateTime PromptForDate(string prompt)
+        {
+
+            DateTime date;
+
+            while (true)
+            {
+                Console.Write(prompt);
+
+                string input = Console.ReadLine();
+
+                if (DateTime.TryParse(input, out date))
+                {
+                    return date;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input.");
+                }
+            }
+        }
+        public void PromptToContinue()
+        {
+            Console.WriteLine("Press any key to continue.");
+            Console.ReadKey();
         }
     }
 }

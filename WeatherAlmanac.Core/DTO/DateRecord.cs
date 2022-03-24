@@ -12,8 +12,8 @@ namespace WeatherAlmanac.Core.DTO
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(Date.ToString("MMMM dd, yyyy"));
-            sb.AppendLine("High: " + HighTemp.ToString());
-            sb.AppendLine("Low: " + LowTemp.ToString());
+            sb.AppendLine("High: " + HighTemp.ToString() + "F");
+            sb.AppendLine("Low: " + LowTemp.ToString() + "F");
             sb.AppendLine("Humidity: " + (Humidity/100).ToString("P"));
             sb.AppendLine($"Description: {Description}");
             sb.AppendLine("----------------------");

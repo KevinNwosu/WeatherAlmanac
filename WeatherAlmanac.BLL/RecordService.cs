@@ -1,6 +1,7 @@
 ﻿using WeatherAlmanac.Core.DTO;
 using WeatherAlmanac.Core.Interface;
 using WeatherAlmanac.DAL;
+using System.Text;
 
 namespace WeatherAlmanac.BLL
 {
@@ -14,11 +15,36 @@ namespace WeatherAlmanac.BLL
 
         public Result<DateRecord> Add(DateRecord record)
         {
-            _repo.Add(record);
             Result<DateRecord> result = new Result<DateRecord>();
-            result.Message = "";
-            result.Success = true;
+            StringBuilder sb = new StringBuilder();
             result.Data = record;
+            result.Success = true;
+            if (result.Data.Date.Ticks > DateTime.Now.Ticks)
+            {
+                result.Success = false;
+                sb.Append("Date not valid. ");
+            }
+            if (result.Data.HighTemp > 140)
+            {
+                result.Success = false;
+                sb.Append("High cannot be more than 140. ");
+            }
+            if (result.Data.LowTemp < -50)
+            {
+                result.Success = false;
+                sb.Append("Low cannot be less than -50. ");
+            }
+            if (result.Data.Humidity < 0 || result.Data.Humidity > 100)
+            {
+                result.Success = false;
+                sb.Append("Humidity must be between 0 and 100");
+            }
+            result.Message = sb.ToString();
+           
+            if (result.Success)
+            {
+                _repo.Add(record);
+            }
             return result;
         }
 

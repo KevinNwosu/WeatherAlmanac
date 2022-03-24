@@ -89,13 +89,11 @@ namespace WeatherAlmanac.UI
             Console.Clear();
             _ui.Display("Load Record");
             _ui.Display("===========================");
-            /*bool isSuccess = DateTime.TryParse(_ui.PromptUser("Enter Record Date in mm/dd/yyyy: "), out DateTime date);
-            Result<DateRecord> result = Service.Get(date);
-            _ui.Display(result.Data.ToString());*/
+            
             bool running = true;
             do
             {
-                bool isSuccess = DateTime.TryParse(_ui.PromptUser("Enter Record Date in mm/dd/yyyy: "), out DateTime date);
+                DateTime date = _ui.PromptForDate("Enter Record Date: ");
                 Result<DateRecord> result = Service.Get(date);
                 if (result.Success == true)
                 {
@@ -114,8 +112,8 @@ namespace WeatherAlmanac.UI
             Console.Clear();
             _ui.Display("Load Records by Date Range");
             _ui.Display("===============================");
-            DateTime startDate = DateTime.Parse(_ui.PromptUser("Enter a start date: "));
-            DateTime endDate = DateTime.Parse(_ui.PromptUser("Enter an end date: "));
+            DateTime startDate = _ui.PromptForDate("Enter a start date: ");
+            DateTime endDate = _ui.PromptForDate("Enter an end date: ");
             Result<List<DateRecord>> result = Service.LoadRange(startDate, endDate);
             foreach (DateRecord record in result.Data)
             {
@@ -125,22 +123,37 @@ namespace WeatherAlmanac.UI
         public void AddRecord()
         {
             Console.Clear();
-            _ui.Display("Add Record");
-            _ui.Display("============================");
-            DateTime date = DateTime.Parse(_ui.PromptUser("Date: "));
-            int highTemp = _ui.GetInt("High: ", 140, -50);
-            int lowTemp = _ui.GetInt("Low: ", 140, -50);
-            int humidity = _ui.GetInt("Humidity: ", 100, -1);
-            string description = _ui.PromptUser("Description: ");
-            DateRecord dateRecord = new DateRecord();
-            dateRecord.Date = date;
-            dateRecord.HighTemp = highTemp;
-            dateRecord.LowTemp = lowTemp;
-            dateRecord.Humidity = humidity;
-            dateRecord.Description = description;
-            Result<DateRecord> result = new Result<DateRecord>();
-            result = Service.Add(dateRecord);
-            _ui.Display(result.Data.ToString());
+            bool running = true;
+            while(running)
+            {
+                _ui.Display("Add Record");
+                _ui.Display("============================");
+                DateTime date = DateTime.Parse(_ui.PromptUser("Date: "));
+                decimal highTemp = _ui.GetDecimal("High: ");
+                decimal lowTemp = _ui.GetDecimal("Low: ");
+                decimal humidity = _ui.GetDecimal("Humidity: ");
+                string description = _ui.PromptUser("Description: ");
+                DateRecord dateRecord = new DateRecord();
+                dateRecord.Date = date;
+                dateRecord.HighTemp = highTemp;
+                dateRecord.LowTemp = lowTemp;
+                dateRecord.Humidity = humidity;
+                dateRecord.Description = description;
+                Result<DateRecord> result = new Result<DateRecord>();
+                result = Service.Add(dateRecord);
+                if (result.Success)
+                {
+                    _ui.Display(result.Data.ToString());
+                    _ui.PromptToContinue();
+                    running = false;
+                }
+                else
+                {
+                    _ui.Display(result.Message);
+                    _ui.PromptToContinue();
+                }
+                
+            }
         }
         public void EditRecord()
         {
