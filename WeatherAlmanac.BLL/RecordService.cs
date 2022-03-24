@@ -47,6 +47,7 @@ namespace WeatherAlmanac.BLL
                         result.Success = true;
                         result.Message = "";
                         result.Data = records[i];
+                        break;
                     }
                     else
                     {

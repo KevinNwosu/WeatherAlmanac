@@ -89,10 +89,10 @@ namespace WeatherAlmanac.UI
             Console.Clear();
             _ui.Display("Load Record");
             _ui.Display("===========================");
-            bool isSuccess = DateTime.TryParse(_ui.PromptUser("Enter Record Date in mm/dd/yyyy: "), out DateTime date);
+            /*bool isSuccess = DateTime.TryParse(_ui.PromptUser("Enter Record Date in mm/dd/yyyy: "), out DateTime date);
             Result<DateRecord> result = Service.Get(date);
-            _ui.Display(result.Data.ToString());
-            /*bool running = true;
+            _ui.Display(result.Data.ToString());*/
+            bool running = true;
             do
             {
                 bool isSuccess = DateTime.TryParse(_ui.PromptUser("Enter Record Date in mm/dd/yyyy: "), out DateTime date);
@@ -107,7 +107,7 @@ namespace WeatherAlmanac.UI
                     _ui.Display(result.Message);
                 }
                 
-            }while(running);*/
+            }while(running);
         }
         public void ViewRecordsByDateRange()
         {
