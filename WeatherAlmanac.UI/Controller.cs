@@ -91,8 +91,23 @@ namespace WeatherAlmanac.UI
             _ui.Display("===========================");
             bool isSuccess = DateTime.TryParse(_ui.PromptUser("Enter Record Date in mm/dd/yyyy: "), out DateTime date);
             Result<DateRecord> result = Service.Get(date);
-            _ui.Display(result.Message);
             _ui.Display(result.Data.ToString());
+            /*bool running = true;
+            do
+            {
+                bool isSuccess = DateTime.TryParse(_ui.PromptUser("Enter Record Date in mm/dd/yyyy: "), out DateTime date);
+                Result<DateRecord> result = Service.Get(date);
+                if (result.Success == true)
+                {
+                    _ui.Display(result.Data.ToString());
+                    running = false;
+                }
+                else
+                {
+                    _ui.Display(result.Message);
+                }
+                
+            }while(running);*/
         }
         public void ViewRecordsByDateRange()
         {
@@ -129,10 +144,41 @@ namespace WeatherAlmanac.UI
         public void EditRecord()
         {
             _ui.Display("Edit Record");
+            _ui.Display("========================");
+            bool isSuccess = DateTime.TryParse(_ui.PromptUser("Enter Record Date in mm/dd/yyyy: "), out DateTime date);
+            Result<DateRecord> result = Service.Get(date);
+            int highTemp = _ui.GetInt($"High {result.Data.HighTemp}: ", 140, -50);
+            int lowTemp = _ui.GetInt($"Low {result.Data.LowTemp}: ", 140, -50);
+            int humidity = _ui.GetInt($"Humidity {(result.Data.Humidity)/100:p}: ", 100, -1);
+            _ui.Display($"Old Description: {result.Data.Description}");
+            string description = _ui.PromptUser("New Description: ");
+            DateRecord dateRecord = new DateRecord();
+            dateRecord.Date = date;
+            dateRecord.HighTemp = highTemp;
+            dateRecord.LowTemp = lowTemp;
+            dateRecord.Humidity = humidity;
+            dateRecord.Description = description;
+            Result<DateRecord> result2 = new Result<DateRecord>();
+            result2 = Service.Edit(dateRecord);
+
         }
         public void DeleteRecord()
         {
             _ui.Display("Delete Record");
+            _ui.Display("============================");
+            bool isSuccess = DateTime.TryParse(_ui.PromptUser("Enter Record Date in mm/dd/yyyy: "), out DateTime date);
+            Result<DateRecord> result = Service.Get(date);
+            _ui.Display(result.Data.ToString());
+            string input = _ui.PromptUser("Are you sure you want to delete this record (y/n): ").ToLower();
+            if (input == "y")
+            {
+                Service.Remove(date);
+            }
+            else
+            {
+                return;
+            }
+
         }
         public void Quit()
         {

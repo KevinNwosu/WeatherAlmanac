@@ -24,7 +24,8 @@ namespace WeatherAlmanac.BLL
 
         public Result<DateRecord> Edit(DateRecord record)
         {
-            throw new NotImplementedException();
+            Result<DateRecord> result = _repo.Edit(record);
+            return result;
             //todo: pass through to IRecordrepository, only if date exists in repository.
         }
 
@@ -36,28 +37,25 @@ namespace WeatherAlmanac.BLL
             {
                 result.Success = false;
                 result.Message = "Date is in the future!";
-                result.Data = null;
             }
             else
             {
-                foreach (DateRecord d in records)
+                for (int i = 0; i < records.Count; i++)
                 {
-                    if (d.Date == date)
+                    if (records[i].Date == date)
                     {
                         result.Success = true;
                         result.Message = "";
-                        result.Data = d;
+                        result.Data = records[i];
                     }
                     else
                     {
                         result.Success = false;
                         result.Message = "No data for that date.";
-                        result.Data = null;
                     }
                 }
             }
             return result;
-            
         }
 
         public Result<List<DateRecord>> LoadRange(DateTime start, DateTime end)
@@ -69,12 +67,12 @@ namespace WeatherAlmanac.BLL
             List<DateRecord> orderedRecord = records.OrderBy(d => d.Date).ToList();
             Result<List<DateRecord>> result = new Result<List<DateRecord>>();
             List<DateRecord> list = new List<DateRecord>();
-            foreach (DateRecord d in orderedRecord)
+            for (int i = 0; i < orderedRecord.Count; i++)
             {
-                if (d.Date <= end && d.Date >= start)
+                if (orderedRecord[i].Date <= end && orderedRecord[i].Date >= start)
                 {
                     DateRecord dateRecord = new DateRecord();
-                    dateRecord = d;
+                    dateRecord = orderedRecord[i];
                     list.Add(dateRecord);
                 }
 
@@ -86,8 +84,8 @@ namespace WeatherAlmanac.BLL
         }
         public Result<DateRecord> Remove(DateTime date)
         {
-            throw new NotImplementedException();
-            //todo: pass through to IRecordRepository
+            Result<DateRecord> result = _repo.Remove(date);
+            return result;
         }
     }
 }

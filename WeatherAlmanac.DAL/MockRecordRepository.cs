@@ -10,7 +10,7 @@ namespace WeatherAlmanac.DAL
         {
             _records = new List<DateRecord>();
             DateRecord bogus  = new DateRecord();
-            bogus.Date = new DateTime(2021, 12, 18);
+            bogus.Date = new DateTime(2021, 11, 18);
             bogus.HighTemp = 82;
             bogus.LowTemp = 40;
             bogus.Humidity = 29M;
@@ -37,8 +37,16 @@ namespace WeatherAlmanac.DAL
 
         public Result<DateRecord> Edit(DateRecord record)
         {
-            throw new NotImplementedException();
-            //todo: replace record in private field
+            Result<DateRecord> result = new Result<DateRecord>();
+            result.Data = record;
+            for (int i = 0; i < _records.Count; i++)
+            {
+                if (_records[i].Date == record.Date)
+                {
+                    _records[i] = record;
+                }
+            }
+            return result;
         }
 
         public Result<List<DateRecord>> GetAll()
@@ -52,8 +60,18 @@ namespace WeatherAlmanac.DAL
 
         public Result<DateRecord> Remove(DateTime record)
         {
-            throw new NotImplementedException();
-            //todo: remove record from private field
+            Result<DateRecord> result = new Result<DateRecord>();
+            for (int i = 0; i < _records.Count; i++)
+            {
+                if (_records[i].Date == record)
+                {
+                    result.Data = _records[i];
+                    result.Success = true;
+                    result.Message = "";
+                    _records.Remove(_records[i]);
+                }
+            }
+            return result;
         }
     }
 }
