@@ -21,7 +21,9 @@ namespace WeatherAlmanac.UI
             {
                 Console.Write(prompt);
 
-                if (int.TryParse(Console.ReadLine(), out value))
+                string input = Console.ReadLine();
+
+                if (int.TryParse(input, out value))
                 {
                     if(value > lowerLimit && value <= upperLimit)
                     {
@@ -35,6 +37,33 @@ namespace WeatherAlmanac.UI
                 else
                 {
                     Console.WriteLine("Invalid input.");
+                }
+            }
+        }
+        public int GetIntOrNull(string prompt, int upperLimit, int lowerLimit)
+        {
+            int value;
+
+            while (true)
+            {
+                Console.Write(prompt);
+
+                string input = Console.ReadLine();
+
+                if (int.TryParse(input, out value))
+                {
+                    if (value > lowerLimit && value <= upperLimit)
+                    {
+                        return value;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Not an option.");
+                    }
+                }
+                else 
+                {
+                    return -1;
                 }
             }
         }

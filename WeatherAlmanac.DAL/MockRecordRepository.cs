@@ -58,12 +58,12 @@ namespace WeatherAlmanac.DAL
             return result;
         }
 
-        public Result<DateRecord> Remove(DateTime record)
+        public Result<DateRecord> Remove(DateTime date)
         {
             Result<DateRecord> result = new Result<DateRecord>();
             for (int i = 0; i < _records.Count; i++)
             {
-                if (_records[i].Date == record)
+                if (_records[i].Date == date)
                 {
                     result.Data = _records[i];
                     result.Success = true;

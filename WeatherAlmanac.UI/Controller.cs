@@ -124,6 +124,7 @@ namespace WeatherAlmanac.UI
         }
         public void AddRecord()
         {
+            Console.Clear();
             _ui.Display("Add Record");
             _ui.Display("============================");
             DateTime date = DateTime.Parse(_ui.PromptUser("Date: "));
@@ -143,27 +144,57 @@ namespace WeatherAlmanac.UI
         }
         public void EditRecord()
         {
+            Console.Clear();
             _ui.Display("Edit Record");
             _ui.Display("========================");
             bool isSuccess = DateTime.TryParse(_ui.PromptUser("Enter Record Date in mm/dd/yyyy: "), out DateTime date);
             Result<DateRecord> result = Service.Get(date);
-            int highTemp = _ui.GetInt($"High {result.Data.HighTemp}: ", 140, -50);
-            int lowTemp = _ui.GetInt($"Low {result.Data.LowTemp}: ", 140, -50);
-            int humidity = _ui.GetInt($"Humidity {(result.Data.Humidity)/100:p}: ", 100, -1);
+            int highTemp = _ui.GetIntOrNull($"High {result.Data.HighTemp}: ", 140, -50);
+            int lowTemp = _ui.GetIntOrNull($"Low {result.Data.LowTemp}: ", 140, -50);
+            int humidity = _ui.GetIntOrNull($"Humidity {(result.Data.Humidity)/100:p}: ", 100, -1);
             _ui.Display($"Old Description: {result.Data.Description}");
             string description = _ui.PromptUser("New Description: ");
             DateRecord dateRecord = new DateRecord();
             dateRecord.Date = date;
-            dateRecord.HighTemp = highTemp;
-            dateRecord.LowTemp = lowTemp;
-            dateRecord.Humidity = humidity;
-            dateRecord.Description = description;
+            if (highTemp == -1)
+            {
+                dateRecord.HighTemp = result.Data.HighTemp;
+            }
+            else
+            {
+                dateRecord.HighTemp = highTemp;
+            }
+            if (lowTemp == -1)
+            {
+                dateRecord.LowTemp = result.Data.LowTemp;
+            }
+            else
+            {
+                dateRecord.LowTemp = lowTemp;
+            }
+            if (humidity == -1)
+            {
+                dateRecord.Humidity = result.Data.Humidity;
+            }
+            else
+            {
+                dateRecord.Humidity = humidity;
+            }
+            if (description == "")
+            {
+                dateRecord.Description = result.Data.Description;
+            }
+            else
+            {
+                dateRecord.Description = description;
+            }
             Result<DateRecord> result2 = new Result<DateRecord>();
             result2 = Service.Edit(dateRecord);
 
         }
         public void DeleteRecord()
         {
+            Console.Clear();
             _ui.Display("Delete Record");
             _ui.Display("============================");
             bool isSuccess = DateTime.TryParse(_ui.PromptUser("Enter Record Date in mm/dd/yyyy: "), out DateTime date);
