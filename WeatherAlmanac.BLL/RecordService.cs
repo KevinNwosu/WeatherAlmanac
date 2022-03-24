@@ -50,7 +50,33 @@ namespace WeatherAlmanac.BLL
 
         public Result<DateRecord> Edit(DateRecord record)
         {
-            Result<DateRecord> result = _repo.Edit(record);
+            List<DateRecord> records = _repo.GetAll().Data;
+            Result<DateRecord> result = new Result<DateRecord>();
+            for (int i = 0; i < records.Count; i++)
+            {
+                if (records[i].Date == record.Date)
+                {
+                    if (record.HighTemp == -1)
+                    {
+                        record.HighTemp = records[i].HighTemp;
+                    }
+                    if (record.LowTemp == -1)
+                    {
+                        record.LowTemp = records[i].LowTemp;
+                    }
+                    if (record.Humidity == -1)
+                    {
+                        record.Humidity = records[i].Humidity;
+                    }
+                    if (record.Description == "")
+                    {
+                        record.Description = records[i].Description;
+                    }
+                    result.Data = record;
+                    break;
+                }
+            }
+            result = _repo.Edit(record);
             return result;
             //todo: pass through to IRecordrepository, only if date exists in repository.
         }
@@ -87,26 +113,40 @@ namespace WeatherAlmanac.BLL
 
         public Result<List<DateRecord>> LoadRange(DateTime start, DateTime end)
         {
-            //todo:check to see that start is before end date
-            //todo:filter records from repository to get all based on date range
-            //todo: if no records found, return success false with ot found message
             List<DateRecord> records = _repo.GetAll().Data;
             List<DateRecord> orderedRecord = records.OrderBy(d => d.Date).ToList();
             Result<List<DateRecord>> result = new Result<List<DateRecord>>();
             List<DateRecord> list = new List<DateRecord>();
-            for (int i = 0; i < orderedRecord.Count; i++)
+            if (start > end)
             {
-                if (orderedRecord[i].Date <= end && orderedRecord[i].Date >= start)
-                {
-                    DateRecord dateRecord = new DateRecord();
-                    dateRecord = orderedRecord[i];
-                    list.Add(dateRecord);
-                }
-
+                result.Message = "Range not valid. Start Date is after End Date.";
+                result.Success = false;
             }
-            result.Data = list;
-            result.Success = true;
-            result.Message = "";
+            else
+            {
+                for (int i = 0; i < orderedRecord.Count; i++)
+                {
+                    if (orderedRecord[i].Date <= end && orderedRecord[i].Date >= start)
+                    {
+                        DateRecord dateRecord = new DateRecord();
+                        dateRecord = orderedRecord[i];
+                        list.Add(dateRecord);
+                    }
+
+                }
+                if (list.Count == 0)
+                {
+                    result.Success = false;
+                    result.Message = " No records in range";
+                }
+                else
+                {
+                    result.Data = list;
+                    result.Success = true;
+                    result.Message = "";
+                }
+            }
+            
             return result;
         }
         public Result<DateRecord> Remove(DateTime date)

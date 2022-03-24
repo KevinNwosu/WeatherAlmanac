@@ -60,9 +60,9 @@ namespace WeatherAlmanac.UI
                 }
             }
         }
-        public int GetIntOrNull(string prompt, int upperLimit, int lowerLimit)
+        public decimal GetDecimalOrNull(string prompt)
         {
-            int value;
+            decimal value;
 
             while (true)
             {
@@ -70,16 +70,9 @@ namespace WeatherAlmanac.UI
 
                 string input = Console.ReadLine();
 
-                if (int.TryParse(input, out value))
+                if (decimal.TryParse(input, out value))
                 {
-                    if (value > lowerLimit && value <= upperLimit)
-                    {
-                        return value;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Not an option.");
-                    }
+                    return value;
                 }
                 else 
                 {

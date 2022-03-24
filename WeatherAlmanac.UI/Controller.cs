@@ -115,9 +115,16 @@ namespace WeatherAlmanac.UI
             DateTime startDate = _ui.PromptForDate("Enter a start date: ");
             DateTime endDate = _ui.PromptForDate("Enter an end date: ");
             Result<List<DateRecord>> result = Service.LoadRange(startDate, endDate);
-            foreach (DateRecord record in result.Data)
+            if (result.Success)
             {
-                _ui.Display(record.ToString());
+                foreach (DateRecord record in result.Data)
+                {
+                    _ui.Display(record.ToString());
+                }
+            }
+            else
+            {
+                _ui.Display(result.Message);
             }
         }
         public void AddRecord()
@@ -160,57 +167,37 @@ namespace WeatherAlmanac.UI
             Console.Clear();
             _ui.Display("Edit Record");
             _ui.Display("========================");
-            bool isSuccess = DateTime.TryParse(_ui.PromptUser("Enter Record Date in mm/dd/yyyy: "), out DateTime date);
+            DateTime date = _ui.PromptForDate("Enter Record Date: ");
             Result<DateRecord> result = Service.Get(date);
-            int highTemp = _ui.GetIntOrNull($"High {result.Data.HighTemp}: ", 140, -50);
-            int lowTemp = _ui.GetIntOrNull($"Low {result.Data.LowTemp}: ", 140, -50);
-            int humidity = _ui.GetIntOrNull($"Humidity {(result.Data.Humidity)/100:p}: ", 100, -1);
-            _ui.Display($"Old Description: {result.Data.Description}");
-            string description = _ui.PromptUser("New Description: ");
-            DateRecord dateRecord = new DateRecord();
-            dateRecord.Date = date;
-            if (highTemp == -1)
+            if (result.Success == true)
             {
-                dateRecord.HighTemp = result.Data.HighTemp;
-            }
-            else
-            {
+                decimal highTemp = _ui.GetDecimalOrNull($"High {result.Data.HighTemp}: ");
+                decimal lowTemp = _ui.GetDecimalOrNull($"Low {result.Data.LowTemp}: ");
+                decimal humidity = _ui.GetDecimalOrNull($"Humidity {(result.Data.Humidity) / 100:p}: ");
+                _ui.Display($"Old Description: {result.Data.Description}");
+                string description = _ui.PromptUser("New Description: ");
+                DateRecord dateRecord = new DateRecord();
+                dateRecord.Date = date;
                 dateRecord.HighTemp = highTemp;
-            }
-            if (lowTemp == -1)
-            {
-                dateRecord.LowTemp = result.Data.LowTemp;
-            }
-            else
-            {
                 dateRecord.LowTemp = lowTemp;
-            }
-            if (humidity == -1)
-            {
-                dateRecord.Humidity = result.Data.Humidity;
-            }
-            else
-            {
                 dateRecord.Humidity = humidity;
-            }
-            if (description == "")
-            {
-                dateRecord.Description = result.Data.Description;
+                dateRecord.Description = description;
+                Result<DateRecord> result2 = new Result<DateRecord>();
+                Service.Edit(dateRecord);
+
             }
             else
             {
-                dateRecord.Description = description;
+                _ui.Display(result.Message);
             }
-            Result<DateRecord> result2 = new Result<DateRecord>();
-            result2 = Service.Edit(dateRecord);
-
+            
         }
         public void DeleteRecord()
         {
             Console.Clear();
             _ui.Display("Delete Record");
             _ui.Display("============================");
-            bool isSuccess = DateTime.TryParse(_ui.PromptUser("Enter Record Date in mm/dd/yyyy: "), out DateTime date);
+            DateTime date = _ui.PromptForDate("Enter Record Date: ");
             Result<DateRecord> result = Service.Get(date);
             _ui.Display(result.Data.ToString());
             string input = _ui.PromptUser("Are you sure you want to delete this record (y/n): ").ToLower();
